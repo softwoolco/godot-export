@@ -4180,7 +4180,7 @@ async function assembleSteamContentsFor(preset, buildDir) {
     const libPath = _constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_SDK_TARGET_PATH */ .F9[preset.platform];
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Assembling steam contents for ${preset.platform}`);
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Basename: ${path__WEBPACK_IMPORTED_MODULE_0___default().basename(preset.export_path)}`);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, buildDir]);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('cp', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, buildDir]);
     await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, buildDir]);
 }
 async function zipBuildResults(buildResults) {

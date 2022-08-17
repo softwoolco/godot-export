@@ -21,7 +21,7 @@ async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string):
   core.info(`Assembling steam contents for ${preset.platform}`);
   core.info(`Basename: ${path.basename(preset.export_path)}`);
 
-  await exec('mv', [STEAM_APPID_PATH, buildDir]);
+  await exec('cp', [STEAM_APPID_PATH, buildDir]);
   await exec('mv', [libPath, buildDir]);
 }
 
