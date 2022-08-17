@@ -4181,9 +4181,10 @@ async function assembleSteamContentsFor(preset, buildDir) {
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Assembling steam contents for ${preset.platform}`);
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Basename: ${path__WEBPACK_IMPORTED_MODULE_0___default().basename(preset.export_path)}`);
     if (preset.platform === _constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS.macOS */ .ub.macOS) {
+        const buildLocation = buildDir.replace(preset.export_path, '');
         const resolvedBuildDir = buildDir.replace('.zip', '.app');
         const macOSPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(resolvedBuildDir, 'Contents', 'MacOS');
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('unzip', ['-q', buildDir]);
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('unzip', ['-q', buildDir, '-d', buildLocation]);
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('rm', [buildDir]);
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('ls', [resolvedBuildDir]);
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('cp', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, macOSPath]);
