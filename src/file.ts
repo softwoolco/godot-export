@@ -30,7 +30,7 @@ async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string):
     await exec('ls', [resolvedBuildDir]);
     await exec('cp', [STEAM_APPID_PATH, macOSPath]);
     await exec('mv', [libPath, macOSPath]);
-    await exec('7z', ['a', resolvedBuildDir]);
+    await exec('7z', ['a', buildDir, resolvedBuildDir]);
   } else {
     await exec('cp', [STEAM_APPID_PATH, buildDir]);
     await exec('mv', [libPath, buildDir]);
