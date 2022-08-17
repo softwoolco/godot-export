@@ -22,7 +22,7 @@ async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string):
   core.info(`Basename: ${path.basename(preset.export_path)}`);
 
   if (preset.platform === DESKTOP_PLATFORMS.macOS) {
-    const resolvedBuildDir = buildDir.replace('.zip', '');
+    const resolvedBuildDir = buildDir.replace('.zip', '.app');
     const macOSPath = path.join(resolvedBuildDir, 'Contents', 'MacOS');
     await exec('unzip', ['-q', buildDir]);
     await exec('rm', [buildDir]);
