@@ -113,11 +113,12 @@ async function prepareExecutable(): Promise<void> {
 
 async function prepareTemplates(): Promise<void> {
   const templateFile = path.join(GODOT_WORKING_PATH, GODOT_TEMPLATES_FILENAME);
-  const templatesPath = path.join(GODOT_WORKING_PATH, 'templates', '3.5.stable');
   const tmpPath = path.join(GODOT_WORKING_PATH, 'tmp');
   const godotVersion = await getGodotVersion();
+  const templatesPath = path.join(GODOT_WORKING_PATH, 'templates', godotVersion);
 
   core.info(`Unzipping templates into ${templatesPath}`);
+  await exec('mkdiw', [templatesPath]);
   await exec('unzip', ['-q', templateFile, '-d', templatesPath]);
   await exec('mv', [templatesPath, tmpPath]);
   await io.mkdirP(templatesPath);
