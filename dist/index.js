@@ -4206,8 +4206,7 @@ async function zipBuildResult(buildResult) {
     }
     else if (!fs__WEBPACK_IMPORTED_MODULE_3__.existsSync(zipPath)) {
         _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Zipping for ${buildResult.preset.platform}`);
-        if (buildResult.preset.platform in Object.values(_constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS */ .ub)) {
-            // @ts-expect-error: we're narrowing the type in the line above
+        if (Object.values(_constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS */ .ub).includes(buildResult.preset.platform)) {
             await assembleSteamContentsFor(buildResult.preset.platform, buildResult.directory);
         }
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('7z', ['a', zipPath, `${buildResult.directory}${_constants__WEBPACK_IMPORTED_MODULE_4__/* .ARCHIVE_ROOT_FOLDER */ .UB ? '' : '/*'}`]);

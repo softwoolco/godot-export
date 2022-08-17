@@ -57,8 +57,7 @@ async function zipBuildResult(buildResult: BuildResult): Promise<void> {
     await io.cp(macPath, zipPath);
   } else if (!fs.existsSync(zipPath)) {
     core.info(`Zipping for ${buildResult.preset.platform}`);
-    if (buildResult.preset.platform in Object.values(DESKTOP_PLATFORMS)) {
-      // @ts-expect-error: we're narrowing the type in the line above
+    if (Object.values(DESKTOP_PLATFORMS).includes(buildResult.preset.platform)) {
       await assembleSteamContentsFor(buildResult.preset.platform, buildResult.directory);
     }
     await exec('7z', ['a', zipPath, `${buildResult.directory}${ARCHIVE_ROOT_FOLDER ? '' : '/*'}`]);

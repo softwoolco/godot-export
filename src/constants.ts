@@ -27,7 +27,7 @@ const DESKTOP_PLATFORMS = {
   windows: 'Windows Desktop',
   linux: 'Linux/X11',
   macOS: 'Mac OSX',
-} as const;
+};
 
 const STEAM_SDK_TARGET_PATH = {
   [DESKTOP_PLATFORMS.windows]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam', 'steam_api64.dll')),
