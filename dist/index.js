@@ -4174,6 +4174,14 @@ const STEAM_SDK_TARGET_PATH = {
 
 
 
+async function assembleSteamContentsFor(platform, buildDir) {
+    const projectPath = path__WEBPACK_IMPORTED_MODULE_0___default().resolve(_constants__WEBPACK_IMPORTED_MODULE_4__/* .RELATIVE_PROJECT_PATH */ .Pk);
+    const libPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(projectPath, _constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_SDK_TARGET_PATH */ .F9[platform]);
+    _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Assembling steam contents for ${platform}`);
+    if (platform === _constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS.windows */ .ub.windows) {
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, buildDir]);
+    }
+}
 async function zipBuildResults(buildResults) {
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.startGroup('⚒️ Zipping binaries');
     const promises = [];
@@ -4183,6 +4191,8 @@ async function zipBuildResults(buildResults) {
     await Promise.all(promises);
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.endGroup();
 }
+// @TODO: Implement me
+// async function _moveSteamAPPID() {}
 async function zipBuildResult(buildResult) {
     await _actions_io__WEBPACK_IMPORTED_MODULE_1__.mkdirP(_constants__WEBPACK_IMPORTED_MODULE_4__/* .GODOT_ARCHIVE_PATH */ .WW);
     const zipPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(_constants__WEBPACK_IMPORTED_MODULE_4__/* .GODOT_ARCHIVE_PATH */ .WW, `${buildResult.sanitizedName}.zip`);
@@ -4195,6 +4205,11 @@ async function zipBuildResult(buildResult) {
         await _actions_io__WEBPACK_IMPORTED_MODULE_1__.cp(macPath, zipPath);
     }
     else if (!fs__WEBPACK_IMPORTED_MODULE_3__.existsSync(zipPath)) {
+        _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Zipping for ${buildResult.preset.platform}`);
+        if (buildResult.preset.platform in Object.values(_constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS */ .ub)) {
+            // @ts-expect-error: we're narrowing the type in the line above
+            await assembleSteamContentsFor(buildResult.preset.platform, buildResult.directory);
+        }
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('7z', ['a', zipPath, `${buildResult.directory}${_constants__WEBPACK_IMPORTED_MODULE_4__/* .ARCHIVE_ROOT_FOLDER */ .UB ? '' : '/*'}`]);
     }
     buildResult.archivePath = zipPath;
@@ -4241,18 +4256,18 @@ async function moveBuildsToExportDirectory(buildResults, moveArchived) {
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   "b": () => (/* binding */ exportBuilds)
 /* harmony export */ });
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(514);
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(186);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(186);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(514);
+/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(436);
 /* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(17);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(147);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var ini__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(45);
-/* harmony import */ var ini__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__nccwpck_require__.n(ini__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(147);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var ini__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(45);
+/* harmony import */ var ini__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(ini__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(17);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var sanitize_filename__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(976);
 /* harmony import */ var sanitize_filename__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__nccwpck_require__.n(sanitize_filename__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(42);
@@ -4270,30 +4285,30 @@ const GODOT_TEMPLATES_FILENAME = 'godot_templates.tpz';
 const EDITOR_SETTINGS_FILENAME = _constants__WEBPACK_IMPORTED_MODULE_7__/* .USE_GODOT_4 */ .f_ ? 'editor_settings-4.tres' : 'editor_settings-3.tres';
 async function exportBuilds() {
     if (!hasExportPresets()) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed('No export_presets.cfg found. Please ensure you have defined at least one export via the Godot editor.');
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('No export_presets.cfg found. Please ensure you have defined at least one export via the Godot editor.');
         return [];
     }
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.startGroup('🕹️ Downloading Godot');
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup('🕹️ Downloading Godot');
     await downloadGodot();
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.endGroup();
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.startGroup('🔍 Adding Editor Settings');
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup();
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup('🔍 Adding Editor Settings');
     await addEditorSettings();
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.endGroup();
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup();
     if (_constants__WEBPACK_IMPORTED_MODULE_7__/* .WINE_PATH */ .N8) {
         configureWindowsExport();
     }
     if (_constants__WEBPACK_IMPORTED_MODULE_7__/* .USE_GODOT_4 */ .f_) {
         await importProject();
     }
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.startGroup('✨ Export binaries');
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup('✨ Export binaries');
     const results = await doExport();
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.endGroup();
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup();
     return results;
 }
 function hasExportPresets() {
     try {
-        const projectPath = path__WEBPACK_IMPORTED_MODULE_3__.resolve(_constants__WEBPACK_IMPORTED_MODULE_7__/* .RELATIVE_PROJECT_PATH */ .Pk);
-        return fs__WEBPACK_IMPORTED_MODULE_4__.statSync(path__WEBPACK_IMPORTED_MODULE_3__.join(projectPath, 'export_presets.cfg')).isFile();
+        const projectPath = path__WEBPACK_IMPORTED_MODULE_5__.resolve(_constants__WEBPACK_IMPORTED_MODULE_7__/* .RELATIVE_PROJECT_PATH */ .Pk);
+        return fs__WEBPACK_IMPORTED_MODULE_3__.statSync(path__WEBPACK_IMPORTED_MODULE_5__.join(projectPath, 'export_presets.cfg')).isFile();
     }
     catch (e) {
         return false;
@@ -4310,54 +4325,54 @@ async function downloadGodot() {
 }
 async function setupWorkingPath() {
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Working path created ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3}`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Working path created ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3}`);
 }
 async function downloadTemplates() {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Downloading Godot export templates from ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_TEMPLATES_DOWNLOAD_URL */ .UA}`);
-    const file = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_TEMPLATES_FILENAME);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('wget', ['-nv', _constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_TEMPLATES_DOWNLOAD_URL */ .UA, '-O', file]);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Downloading Godot export templates from ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_TEMPLATES_DOWNLOAD_URL */ .UA}`);
+    const file = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_TEMPLATES_FILENAME);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('wget', ['-nv', _constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_TEMPLATES_DOWNLOAD_URL */ .UA, '-O', file]);
 }
 async function downloadExecutable() {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Downloading Godot executable from ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_DOWNLOAD_URL */ .jb}`);
-    const file = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_ZIP);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('wget', ['-nv', _constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_DOWNLOAD_URL */ .jb, '-O', file]);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Finished downloading at ${file}`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Downloading Godot executable from ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_DOWNLOAD_URL */ .jb}`);
+    const file = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_ZIP);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('wget', ['-nv', _constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_DOWNLOAD_URL */ .jb, '-O', file]);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Finished downloading at ${file}`);
 }
 async function prepareExecutable() {
-    const zipFile = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_ZIP);
-    const zipTo = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_EXECUTABLE);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Looking for executable at ${zipFile}`);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('7z', ['x', zipFile, `-o${zipTo}`, '-y']);
+    const zipFile = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_ZIP);
+    const zipTo = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_EXECUTABLE);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Looking for executable at ${zipFile}`);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('7z', ['x', zipFile, `-o${zipTo}`, '-y']);
     const executablePath = findGodotExecutablePath(zipTo);
     if (!executablePath) {
         throw new Error('Could not find Godot executable');
     }
-    const finalGodotPath = path__WEBPACK_IMPORTED_MODULE_3__.join(path__WEBPACK_IMPORTED_MODULE_3__.dirname(executablePath), 'godot');
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('mv', [executablePath, finalGodotPath]);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.addPath(path__WEBPACK_IMPORTED_MODULE_3__.dirname(finalGodotPath));
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('chmod', ['+x', finalGodotPath]);
+    const finalGodotPath = path__WEBPACK_IMPORTED_MODULE_5__.join(path__WEBPACK_IMPORTED_MODULE_5__.dirname(executablePath), 'godot');
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('mv', [executablePath, finalGodotPath]);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.addPath(path__WEBPACK_IMPORTED_MODULE_5__.dirname(finalGodotPath));
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('chmod', ['+x', finalGodotPath]);
 }
 async function prepareTemplates() {
-    const templateFile = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_TEMPLATES_FILENAME);
-    const tmpPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'tmp');
+    const templateFile = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_TEMPLATES_FILENAME);
+    const tmpPath = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'tmp');
     const godotVersion = await getGodotVersion();
-    const templatesPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'templates', godotVersion);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Unzipping templates into ${templatesPath}`);
+    const templatesPath = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'templates', godotVersion);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Unzipping templates into ${templatesPath}`);
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(templatesPath);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('unzip', ['-q', templateFile, '-d', templatesPath]);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('mv', [templatesPath, tmpPath]);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('mv', [tmpPath, path__WEBPACK_IMPORTED_MODULE_3__.join(templatesPath)]);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('unzip', ['-q', templateFile, '-d', templatesPath]);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('mv', [templatesPath, tmpPath]);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('mv', [tmpPath, path__WEBPACK_IMPORTED_MODULE_5__.join(templatesPath)]);
 }
 async function prepareTemplates4() {
-    const templateFile = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_TEMPLATES_FILENAME);
-    const templatesPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'templates');
+    const templateFile = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_TEMPLATES_FILENAME);
+    const templatesPath = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'templates');
     const godotVersion = await getGodotVersion();
-    const godotVersionPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, godotVersion);
-    const exportTemplatesPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'export_templates');
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('unzip', [templateFile, '-d', _constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3]);
+    const godotVersionPath = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, godotVersion);
+    const exportTemplatesPath = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'export_templates');
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('unzip', [templateFile, '-d', _constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3]);
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(exportTemplatesPath);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('mv', [templatesPath, godotVersionPath]);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('mv', [godotVersionPath, exportTemplatesPath]);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('mv', [templatesPath, godotVersionPath]);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('mv', [godotVersionPath, exportTemplatesPath]);
 }
 async function getGodotVersion() {
     let version = '';
@@ -4369,7 +4384,7 @@ async function getGodotVersion() {
             },
         },
     };
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('godot', ['--version'], options);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('godot', ['--version'], options);
     version = version.trim();
     version = version
         .replace('.official', '')
@@ -4380,28 +4395,18 @@ async function getGodotVersion() {
     }
     return version;
 }
-async function assembleSteamContentsFor(platform, buildDir) {
-    const projectPath = path__WEBPACK_IMPORTED_MODULE_3__.resolve(_constants__WEBPACK_IMPORTED_MODULE_7__/* .RELATIVE_PROJECT_PATH */ .Pk);
-    const libPath = path__WEBPACK_IMPORTED_MODULE_3__.join(projectPath, _constants__WEBPACK_IMPORTED_MODULE_7__/* .STEAM_SDK_TARGET_PATH */ .F9[platform]);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Assembling steam contents for ${platform}`);
-    if (platform === _constants__WEBPACK_IMPORTED_MODULE_7__/* .DESKTOP_PLATFORMS.windows */ .ub.windows) {
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('mv', [libPath, buildDir]);
-    }
-}
-// @TODO: Implement me
-// async function _moveSteamAPPID() {}
 async function doExport() {
     const buildResults = [];
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`🎯 Using project file at ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_PROJECT_FILE_PATH */ .oS}`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`🎯 Using project file at ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_PROJECT_FILE_PATH */ .oS}`);
     for (const preset of getExportPresets()) {
         const sanitizedName = sanitize_filename__WEBPACK_IMPORTED_MODULE_6___default()(preset.name);
-        const buildDir = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_BUILD_PATH */ .pT, sanitizedName);
+        const buildDir = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_BUILD_PATH */ .pT, sanitizedName);
         let executablePath;
         if (preset.export_path) {
-            executablePath = path__WEBPACK_IMPORTED_MODULE_3__.join(buildDir, path__WEBPACK_IMPORTED_MODULE_3__.basename(preset.export_path));
+            executablePath = path__WEBPACK_IMPORTED_MODULE_5__.join(buildDir, path__WEBPACK_IMPORTED_MODULE_5__.basename(preset.export_path));
         }
         if (!executablePath) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`No file path set for preset "${preset.name}". Skipping export!`);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.warning(`No file path set for preset "${preset.name}". Skipping export!`);
             continue;
         }
         if (_constants__WEBPACK_IMPORTED_MODULE_7__/* .EXPORT_PACK_ONLY */ .Z3) {
@@ -4413,7 +4418,7 @@ async function doExport() {
             exportFlag = _constants__WEBPACK_IMPORTED_MODULE_7__/* .EXPORT_DEBUG */ .Bl ? '--export-debug' : '--export-release';
         }
         else {
-            _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`exporting mode: ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .EXPORT_PACK_ONLY */ .Z3}`);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`exporting mode: ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .EXPORT_PACK_ONLY */ .Z3}`);
             if (_constants__WEBPACK_IMPORTED_MODULE_7__/* .EXPORT_PACK_ONLY */ .Z3) {
                 exportFlag = '--export-pack';
             }
@@ -4427,15 +4432,11 @@ async function doExport() {
         if (_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_VERBOSE */ .co) {
             args.push('--verbose');
         }
-        if (preset.platform in Object.values(_constants__WEBPACK_IMPORTED_MODULE_7__/* .DESKTOP_PLATFORMS */ .ub)) {
-            // @ts-expect-error: we're narrowing the type in the line above
-            await assembleSteamContentsFor(preset.platform, buildDir);
-        }
-        const result = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('godot', args);
+        const result = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('godot', args);
         if (result !== 0) {
             throw new Error('1 or more exports failed');
         }
-        const directoryEntries = fs__WEBPACK_IMPORTED_MODULE_4__.readdirSync(buildDir);
+        const directoryEntries = fs__WEBPACK_IMPORTED_MODULE_3__.readdirSync(buildDir);
         buildResults.push({
             preset,
             sanitizedName,
@@ -4447,25 +4448,25 @@ async function doExport() {
     return buildResults;
 }
 function configureWindowsExport() {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.startGroup('📝 Appending Wine editor settings');
-    const rceditPath = path__WEBPACK_IMPORTED_MODULE_3__.join(__dirname, 'rcedit-x64.exe');
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Writing rcedit path to editor settings ${rceditPath}`);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Writing wine path to editor settings ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .WINE_PATH */ .N8}`);
-    const editorSettingsPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_CONFIG_PATH */ .vE, EDITOR_SETTINGS_FILENAME);
-    fs__WEBPACK_IMPORTED_MODULE_4__.writeFileSync(editorSettingsPath, `export/windows/rcedit = "${rceditPath}"\n`, { flag: 'a' });
-    fs__WEBPACK_IMPORTED_MODULE_4__.writeFileSync(editorSettingsPath, `export/windows/wine = "${_constants__WEBPACK_IMPORTED_MODULE_7__/* .WINE_PATH */ .N8}"\n`, { flag: 'a' });
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup('📝 Appending Wine editor settings');
+    const rceditPath = path__WEBPACK_IMPORTED_MODULE_5__.join(__dirname, 'rcedit-x64.exe');
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Writing rcedit path to editor settings ${rceditPath}`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Writing wine path to editor settings ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .WINE_PATH */ .N8}`);
+    const editorSettingsPath = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_CONFIG_PATH */ .vE, EDITOR_SETTINGS_FILENAME);
+    fs__WEBPACK_IMPORTED_MODULE_3__.writeFileSync(editorSettingsPath, `export/windows/rcedit = "${rceditPath}"\n`, { flag: 'a' });
+    fs__WEBPACK_IMPORTED_MODULE_3__.writeFileSync(editorSettingsPath, `export/windows/wine = "${_constants__WEBPACK_IMPORTED_MODULE_7__/* .WINE_PATH */ .N8}"\n`, { flag: 'a' });
     // TODO: remove this
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(fs__WEBPACK_IMPORTED_MODULE_4__.readFileSync(editorSettingsPath, { encoding: 'utf-8' }).toString());
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Wrote settings to ${editorSettingsPath}`);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.endGroup();
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync(editorSettingsPath, { encoding: 'utf-8' }).toString());
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Wrote settings to ${editorSettingsPath}`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup();
 }
 function findGodotExecutablePath(basePath) {
-    const paths = fs__WEBPACK_IMPORTED_MODULE_4__.readdirSync(basePath);
+    const paths = fs__WEBPACK_IMPORTED_MODULE_3__.readdirSync(basePath);
     const dirs = [];
     for (const subPath of paths) {
-        const fullPath = path__WEBPACK_IMPORTED_MODULE_3__.join(basePath, subPath);
-        const stats = fs__WEBPACK_IMPORTED_MODULE_4__.statSync(fullPath);
-        if (stats.isFile() && (path__WEBPACK_IMPORTED_MODULE_3__.extname(fullPath) === '.64' || path__WEBPACK_IMPORTED_MODULE_3__.extname(fullPath) === '.x86_64')) {
+        const fullPath = path__WEBPACK_IMPORTED_MODULE_5__.join(basePath, subPath);
+        const stats = fs__WEBPACK_IMPORTED_MODULE_3__.statSync(fullPath);
+        if (stats.isFile() && (path__WEBPACK_IMPORTED_MODULE_5__.extname(fullPath) === '.64' || path__WEBPACK_IMPORTED_MODULE_5__.extname(fullPath) === '.x86_64')) {
             return fullPath;
         }
         else {
@@ -4479,35 +4480,35 @@ function findGodotExecutablePath(basePath) {
 }
 function getExportPresets() {
     const exportPrests = [];
-    const projectPath = path__WEBPACK_IMPORTED_MODULE_3__.resolve(_constants__WEBPACK_IMPORTED_MODULE_7__/* .RELATIVE_PROJECT_PATH */ .Pk);
+    const projectPath = path__WEBPACK_IMPORTED_MODULE_5__.resolve(_constants__WEBPACK_IMPORTED_MODULE_7__/* .RELATIVE_PROJECT_PATH */ .Pk);
     if (!hasExportPresets()) {
         throw new Error(`Could not find export_presets.cfg in ${projectPath}`);
     }
-    const exportFilePath = path__WEBPACK_IMPORTED_MODULE_3__.join(projectPath, 'export_presets.cfg');
-    const iniStr = fs__WEBPACK_IMPORTED_MODULE_4__.readFileSync(exportFilePath, { encoding: 'utf8' });
-    const presets = ini__WEBPACK_IMPORTED_MODULE_5__.decode(iniStr);
+    const exportFilePath = path__WEBPACK_IMPORTED_MODULE_5__.join(projectPath, 'export_presets.cfg');
+    const iniStr = fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync(exportFilePath, { encoding: 'utf8' });
+    const presets = ini__WEBPACK_IMPORTED_MODULE_4__.decode(iniStr);
     if (presets === null || presets === void 0 ? void 0 : presets.preset) {
         for (const key in presets.preset) {
             exportPrests.push(presets.preset[key]);
         }
     }
     else {
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`No presets found in export_presets.cfg at ${projectPath}`);
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.warning(`No presets found in export_presets.cfg at ${projectPath}`);
     }
     return exportPrests;
 }
 async function addEditorSettings() {
-    const editorSettingsDist = path__WEBPACK_IMPORTED_MODULE_3__.join(__dirname, EDITOR_SETTINGS_FILENAME);
+    const editorSettingsDist = path__WEBPACK_IMPORTED_MODULE_5__.join(__dirname, EDITOR_SETTINGS_FILENAME);
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_CONFIG_PATH */ .vE);
-    const editorSettingsPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_CONFIG_PATH */ .vE, EDITOR_SETTINGS_FILENAME);
+    const editorSettingsPath = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_CONFIG_PATH */ .vE, EDITOR_SETTINGS_FILENAME);
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(editorSettingsDist, editorSettingsPath, { force: false });
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Wrote editor settings to ${editorSettingsPath}`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Wrote editor settings to ${editorSettingsPath}`);
 }
 /** Open the editor in headless mode once, to import all assets, creating the `.godot` directory if it doesn't exist. */
 async function importProject() {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.startGroup('🎲 Import project');
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('godot', [_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_PROJECT_FILE_PATH */ .oS, '--headless', '-e', '--quit']);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.endGroup();
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup('🎲 Import project');
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('godot', [_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_PROJECT_FILE_PATH */ .oS, '--headless', '-e', '--quit']);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup();
 }
 
 

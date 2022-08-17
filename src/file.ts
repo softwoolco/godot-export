@@ -5,12 +5,29 @@ import { exec } from '@actions/exec';
 import * as fs from 'fs';
 import {
   ARCHIVE_ROOT_FOLDER,
+  DESKTOP_PLATFORMS,
   GODOT_ARCHIVE_PATH,
   GODOT_PROJECT_PATH,
   RELATIVE_EXPORT_PATH,
+  RELATIVE_PROJECT_PATH,
+  STEAM_SDK_TARGET_PATH,
   USE_PRESET_EXPORT_PATH,
 } from './constants';
 import * as core from '@actions/core';
+
+async function assembleSteamContentsFor(
+  platform: typeof DESKTOP_PLATFORMS[keyof typeof DESKTOP_PLATFORMS],
+  buildDir: string,
+): Promise<void> {
+  const projectPath = path.resolve(RELATIVE_PROJECT_PATH);
+  const libPath = path.join(projectPath, STEAM_SDK_TARGET_PATH[platform]);
+
+  core.info(`Assembling steam contents for ${platform}`);
+
+  if (platform === DESKTOP_PLATFORMS.windows) {
+    await exec('mv', [libPath, buildDir]);
+  }
+}
 
 async function zipBuildResults(buildResults: BuildResult[]): Promise<void> {
   core.startGroup('⚒️ Zipping binaries');
@@ -21,6 +38,9 @@ async function zipBuildResults(buildResults: BuildResult[]): Promise<void> {
   await Promise.all(promises);
   core.endGroup();
 }
+
+// @TODO: Implement me
+// async function _moveSteamAPPID() {}
 
 async function zipBuildResult(buildResult: BuildResult): Promise<void> {
   await io.mkdirP(GODOT_ARCHIVE_PATH);
@@ -36,6 +56,11 @@ async function zipBuildResult(buildResult: BuildResult): Promise<void> {
     const macPath = path.join(buildResult.directory, baseName);
     await io.cp(macPath, zipPath);
   } else if (!fs.existsSync(zipPath)) {
+    core.info(`Zipping for ${buildResult.preset.platform}`);
+    if (buildResult.preset.platform in Object.values(DESKTOP_PLATFORMS)) {
+      // @ts-expect-error: we're narrowing the type in the line above
+      await assembleSteamContentsFor(buildResult.preset.platform, buildResult.directory);
+    }
     await exec('7z', ['a', zipPath, `${buildResult.directory}${ARCHIVE_ROOT_FOLDER ? '' : '/*'}`]);
   }
 

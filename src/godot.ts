@@ -1,28 +1,26 @@
-import { exec } from '@actions/exec';
 import * as core from '@actions/core';
+import { exec } from '@actions/exec';
+import { ExecOptions } from '@actions/exec/lib/interfaces';
 import * as io from '@actions/io';
-import * as path from 'path';
 import * as fs from 'fs';
 import * as ini from 'ini';
-import { ExportPresets, ExportPreset, BuildResult } from './types/GodotExport';
+import * as path from 'path';
 import sanitize from 'sanitize-filename';
-import { ExecOptions } from '@actions/exec/lib/interfaces';
 import {
+  EXPORT_DEBUG,
+  EXPORT_PACK_ONLY,
+  GODOT_BUILD_PATH,
   GODOT_CONFIG_PATH,
   GODOT_DOWNLOAD_URL,
+  GODOT_PROJECT_FILE_PATH,
   GODOT_TEMPLATES_DOWNLOAD_URL,
+  GODOT_VERBOSE,
   GODOT_WORKING_PATH,
   RELATIVE_PROJECT_PATH,
-  WINE_PATH,
-  EXPORT_DEBUG,
-  GODOT_VERBOSE,
-  GODOT_BUILD_PATH,
-  GODOT_PROJECT_FILE_PATH,
   USE_GODOT_4,
-  EXPORT_PACK_ONLY,
-  DESKTOP_PLATFORMS,
-  STEAM_SDK_TARGET_PATH,
+  WINE_PATH,
 } from './constants';
+import { BuildResult, ExportPreset, ExportPresets } from './types/GodotExport';
 
 const GODOT_EXECUTABLE = 'godot_executable';
 const GODOT_ZIP = 'godot.zip';
@@ -164,23 +162,6 @@ async function getGodotVersion(): Promise<string> {
   return version;
 }
 
-async function assembleSteamContentsFor(
-  platform: typeof DESKTOP_PLATFORMS[keyof typeof DESKTOP_PLATFORMS],
-  buildDir: string,
-): Promise<void> {
-  const projectPath = path.resolve(RELATIVE_PROJECT_PATH);
-  const libPath = path.join(projectPath, STEAM_SDK_TARGET_PATH[platform]);
-
-  core.info(`Assembling steam contents for ${platform}`);
-
-  if (platform === DESKTOP_PLATFORMS.windows) {
-    await exec('mv', [libPath, buildDir]);
-  }
-}
-
-// @TODO: Implement me
-// async function _moveSteamAPPID() {}
-
 async function doExport(): Promise<BuildResult[]> {
   const buildResults: BuildResult[] = [];
   core.info(`🎯 Using project file at ${GODOT_PROJECT_FILE_PATH}`);
@@ -219,11 +200,6 @@ async function doExport(): Promise<BuildResult[]> {
     if (USE_GODOT_4) args.splice(1, 0, '--headless');
     if (GODOT_VERBOSE) {
       args.push('--verbose');
-    }
-
-    if (preset.platform in Object.values(DESKTOP_PLATFORMS)) {
-      // @ts-expect-error: we're narrowing the type in the line above
-      await assembleSteamContentsFor(preset.platform, buildDir);
     }
 
     const result = await exec('godot', args);
