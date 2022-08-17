@@ -1,4 +1,4 @@
-import { BuildResult } from './types/GodotExport';
+import { BuildResult, ExportPreset } from './types/GodotExport';
 import path from 'path';
 import * as io from '@actions/io';
 import { exec } from '@actions/exec';
@@ -9,22 +9,20 @@ import {
   GODOT_ARCHIVE_PATH,
   GODOT_PROJECT_PATH,
   RELATIVE_EXPORT_PATH,
+  STEAM_APPID_PATH,
   STEAM_SDK_TARGET_PATH,
   USE_PRESET_EXPORT_PATH,
 } from './constants';
 import * as core from '@actions/core';
 
-async function assembleSteamContentsFor(
-  platform: typeof DESKTOP_PLATFORMS[keyof typeof DESKTOP_PLATFORMS],
-  buildDir: string,
-): Promise<void> {
-  const libPath = STEAM_SDK_TARGET_PATH[platform];
+async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string): Promise<void> {
+  const libPath = STEAM_SDK_TARGET_PATH[preset.platform];
 
-  core.info(`Assembling steam contents for ${platform}`);
+  core.info(`Assembling steam contents for ${preset.platform}`);
+  core.info(`Basename: ${path.basename(preset.export_path)}`);
 
-  if (platform === DESKTOP_PLATFORMS.windows) {
-    await exec('mv', [libPath, buildDir]);
-  }
+  await exec('mv', [STEAM_APPID_PATH, buildDir]);
+  await exec('mv', [libPath, buildDir]);
 }
 
 async function zipBuildResults(buildResults: BuildResult[]): Promise<void> {
@@ -56,7 +54,7 @@ async function zipBuildResult(buildResult: BuildResult): Promise<void> {
   } else if (!fs.existsSync(zipPath)) {
     core.info(`Zipping for ${buildResult.preset.platform}`);
     if (Object.values(DESKTOP_PLATFORMS).includes(buildResult.preset.platform)) {
-      await assembleSteamContentsFor(buildResult.preset.platform, buildResult.directory);
+      await assembleSteamContentsFor(buildResult.preset, buildResult.directory);
     }
     await exec('7z', ['a', zipPath, `${buildResult.directory}${ARCHIVE_ROOT_FOLDER ? '' : '/*'}`]);
   }

@@ -4103,7 +4103,8 @@ exports.debug = debug; // for test
 /* harmony export */   "f_": () => (/* binding */ USE_GODOT_4),
 /* harmony export */   "Z3": () => (/* binding */ EXPORT_PACK_ONLY),
 /* harmony export */   "ub": () => (/* binding */ DESKTOP_PLATFORMS),
-/* harmony export */   "F9": () => (/* binding */ STEAM_SDK_TARGET_PATH)
+/* harmony export */   "F9": () => (/* binding */ STEAM_SDK_TARGET_PATH),
+/* harmony export */   "xX": () => (/* binding */ STEAM_APPID_PATH)
 /* harmony export */ });
 /* unused harmony export GENERATE_RELEASE_NOTES */
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(186);
@@ -4134,6 +4135,7 @@ const GODOT_BUILD_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_
 const GODOT_ARCHIVE_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_WORKING_PATH, 'archives');
 const GODOT_PROJECT_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH));
 const GODOT_PROJECT_FILE_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_PROJECT_PATH, 'project.godot');
+const STEAM_APPID_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam_appid.txt'));
 const DESKTOP_PLATFORMS = {
     windows: 'Windows Desktop',
     linux: 'Linux/X11',
@@ -4174,12 +4176,12 @@ const STEAM_SDK_TARGET_PATH = {
 
 
 
-async function assembleSteamContentsFor(platform, buildDir) {
-    const libPath = _constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_SDK_TARGET_PATH */ .F9[platform];
-    _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Assembling steam contents for ${platform}`);
-    if (platform === _constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS.windows */ .ub.windows) {
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, buildDir]);
-    }
+async function assembleSteamContentsFor(preset, buildDir) {
+    const libPath = _constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_SDK_TARGET_PATH */ .F9[preset.platform];
+    _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Assembling steam contents for ${preset.platform}`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Basename: ${path__WEBPACK_IMPORTED_MODULE_0___default().basename(preset.export_path)}`);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, buildDir]);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, buildDir]);
 }
 async function zipBuildResults(buildResults) {
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.startGroup('⚒️ Zipping binaries');
@@ -4206,7 +4208,7 @@ async function zipBuildResult(buildResult) {
     else if (!fs__WEBPACK_IMPORTED_MODULE_3__.existsSync(zipPath)) {
         _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Zipping for ${buildResult.preset.platform}`);
         if (Object.values(_constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS */ .ub).includes(buildResult.preset.platform)) {
-            await assembleSteamContentsFor(buildResult.preset.platform, buildResult.directory);
+            await assembleSteamContentsFor(buildResult.preset, buildResult.directory);
         }
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('7z', ['a', zipPath, `${buildResult.directory}${_constants__WEBPACK_IMPORTED_MODULE_4__/* .ARCHIVE_ROOT_FOLDER */ .UB ? '' : '/*'}`]);
     }
