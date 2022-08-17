@@ -92,17 +92,18 @@ async function downloadExecutable(): Promise<void> {
 
   const file = path.join(GODOT_WORKING_PATH, GODOT_ZIP);
   await exec('wget', ['-nv', GODOT_DOWNLOAD_URL, '-O', file]);
+  core.info(`Finished downloading at ${file}`);
 }
 
 async function prepareExecutable(): Promise<void> {
   const zipFile = path.join(GODOT_WORKING_PATH, GODOT_ZIP);
   const zipTo = path.join(GODOT_WORKING_PATH, GODOT_EXECUTABLE);
+  core.info(`Looking for executable at ${zipFile}`);
   await exec('7z', ['x', zipFile, `-o${zipTo}`, '-y']);
   const executablePath = findGodotExecutablePath(zipTo);
   if (!executablePath) {
     throw new Error('Could not find Godot executable');
   }
-  core.info(`Found executable at ${executablePath}`);
 
   const finalGodotPath = path.join(path.dirname(executablePath), 'godot');
   await exec('mv', [executablePath, finalGodotPath]);
@@ -116,6 +117,7 @@ async function prepareTemplates(): Promise<void> {
   const tmpPath = path.join(GODOT_WORKING_PATH, 'tmp');
   const godotVersion = await getGodotVersion();
 
+  core.info(`Unzipping templates into ${templatesPath}`);
   await exec('unzip', ['-q', templateFile, '-d', templatesPath]);
   await exec('mv', [templatesPath, tmpPath]);
   await io.mkdirP(templatesPath);
