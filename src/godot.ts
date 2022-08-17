@@ -20,6 +20,8 @@ import {
   GODOT_PROJECT_FILE_PATH,
   USE_GODOT_4,
   EXPORT_PACK_ONLY,
+  DESKTOP_PLATFORMS,
+  STEAM_SDK_TARGET_PATH,
 } from './constants';
 
 const GODOT_EXECUTABLE = 'godot_executable';
@@ -162,6 +164,23 @@ async function getGodotVersion(): Promise<string> {
   return version;
 }
 
+async function assembleSteamContentsFor(
+  platform: typeof DESKTOP_PLATFORMS[keyof typeof DESKTOP_PLATFORMS],
+  buildDir: string,
+): Promise<void> {
+  const projectPath = path.resolve(RELATIVE_PROJECT_PATH);
+  const libPath = path.join(projectPath, STEAM_SDK_TARGET_PATH[platform]);
+
+  core.info(`Assembling steam contents for ${platform}`);
+
+  if (platform === DESKTOP_PLATFORMS.windows) {
+    await exec('mv', [libPath, buildDir]);
+  }
+}
+
+// @TODO: Implement me
+// async function _moveSteamAPPID() {}
+
 async function doExport(): Promise<BuildResult[]> {
   const buildResults: BuildResult[] = [];
   core.info(`🎯 Using project file at ${GODOT_PROJECT_FILE_PATH}`);
@@ -201,6 +220,12 @@ async function doExport(): Promise<BuildResult[]> {
     if (GODOT_VERBOSE) {
       args.push('--verbose');
     }
+
+    if (preset.platform in Object.values(DESKTOP_PLATFORMS)) {
+      // @ts-expect-error: we're narrowing the type in the line above
+      await assembleSteamContentsFor(preset.platform, buildDir);
+    }
+
     const result = await exec('godot', args);
     if (result !== 0) {
       throw new Error('1 or more exports failed');

@@ -4101,7 +4101,9 @@ exports.debug = debug; // for test
 /* harmony export */   "XH": () => (/* binding */ USE_PRESET_EXPORT_PATH),
 /* harmony export */   "N8": () => (/* binding */ WINE_PATH),
 /* harmony export */   "f_": () => (/* binding */ USE_GODOT_4),
-/* harmony export */   "Z3": () => (/* binding */ EXPORT_PACK_ONLY)
+/* harmony export */   "Z3": () => (/* binding */ EXPORT_PACK_ONLY),
+/* harmony export */   "ub": () => (/* binding */ DESKTOP_PLATFORMS),
+/* harmony export */   "F9": () => (/* binding */ STEAM_SDK_TARGET_PATH)
 /* harmony export */ });
 /* unused harmony export GENERATE_RELEASE_NOTES */
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(186);
@@ -4132,6 +4134,16 @@ const GODOT_BUILD_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_
 const GODOT_ARCHIVE_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_WORKING_PATH, 'archives');
 const GODOT_PROJECT_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH));
 const GODOT_PROJECT_FILE_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_PROJECT_PATH, 'project.godot');
+const DESKTOP_PLATFORMS = {
+    windows: 'Windows Desktop',
+    linux: 'Linux/X11',
+    macOS: 'Mac OSX',
+};
+const STEAM_SDK_TARGET_PATH = {
+    [DESKTOP_PLATFORMS.windows]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'steam_api64.dll')),
+    [DESKTOP_PLATFORMS.macOS]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.dylib')),
+    [DESKTOP_PLATFORMS.linux]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.so')),
+};
 
 
 
@@ -4368,6 +4380,16 @@ async function getGodotVersion() {
     }
     return version;
 }
+async function assembleSteamContentsFor(platform, buildDir) {
+    const projectPath = path__WEBPACK_IMPORTED_MODULE_3__.resolve(_constants__WEBPACK_IMPORTED_MODULE_7__/* .RELATIVE_PROJECT_PATH */ .Pk);
+    const libPath = path__WEBPACK_IMPORTED_MODULE_3__.join(projectPath, _constants__WEBPACK_IMPORTED_MODULE_7__/* .STEAM_SDK_TARGET_PATH */ .F9[platform]);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Assembling steam contents for ${platform}`);
+    if (platform === _constants__WEBPACK_IMPORTED_MODULE_7__/* .DESKTOP_PLATFORMS.windows */ .ub.windows) {
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('mv', [libPath, buildDir]);
+    }
+}
+// @TODO: Implement me
+// async function _moveSteamAPPID() {}
 async function doExport() {
     const buildResults = [];
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`🎯 Using project file at ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_PROJECT_FILE_PATH */ .oS}`);
@@ -4404,6 +4426,10 @@ async function doExport() {
             args.splice(1, 0, '--headless');
         if (_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_VERBOSE */ .co) {
             args.push('--verbose');
+        }
+        if (preset.platform in Object.values(_constants__WEBPACK_IMPORTED_MODULE_7__/* .DESKTOP_PLATFORMS */ .ub)) {
+            // @ts-expect-error: we're narrowing the type in the line above
+            await assembleSteamContentsFor(preset.platform, buildDir);
         }
         const result = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('godot', args);
         if (result !== 0) {
