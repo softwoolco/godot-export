@@ -4309,16 +4309,17 @@ async function downloadExecutable() {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Downloading Godot executable from ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_DOWNLOAD_URL */ .jb}`);
     const file = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_ZIP);
     await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('wget', ['-nv', _constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_DOWNLOAD_URL */ .jb, '-O', file]);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Finished downloading at ${file}`);
 }
 async function prepareExecutable() {
     const zipFile = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_ZIP);
     const zipTo = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_EXECUTABLE);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Looking for executable at ${zipFile}`);
     await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('7z', ['x', zipFile, `-o${zipTo}`, '-y']);
     const executablePath = findGodotExecutablePath(zipTo);
     if (!executablePath) {
         throw new Error('Could not find Godot executable');
     }
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Found executable at ${executablePath}`);
     const finalGodotPath = path__WEBPACK_IMPORTED_MODULE_3__.join(path__WEBPACK_IMPORTED_MODULE_3__.dirname(executablePath), 'godot');
     await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('mv', [executablePath, finalGodotPath]);
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.addPath(path__WEBPACK_IMPORTED_MODULE_3__.dirname(finalGodotPath));
@@ -4329,6 +4330,7 @@ async function prepareTemplates() {
     const templatesPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'templates');
     const tmpPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'tmp');
     const godotVersion = await getGodotVersion();
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Unzipping templates into ${templatesPath}`);
     await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('unzip', ['-q', templateFile, '-d', templatesPath]);
     await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)('mv', [templatesPath, tmpPath]);
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(templatesPath);
