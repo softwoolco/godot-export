@@ -4327,7 +4327,7 @@ async function prepareExecutable() {
 }
 async function prepareTemplates() {
     const templateFile = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_TEMPLATES_FILENAME);
-    const templatesPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'templates');
+    const templatesPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'templates', '3.5.stable');
     const tmpPath = path__WEBPACK_IMPORTED_MODULE_3__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, 'tmp');
     const godotVersion = await getGodotVersion();
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Unzipping templates into ${templatesPath}`);
