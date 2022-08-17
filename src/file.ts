@@ -26,7 +26,7 @@ async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string):
     const macOSPath = path.join(resolvedBuildDir, 'Contents', 'MacOS');
     await exec('unzip', ['-q', buildDir]);
     await exec('rm', [buildDir]);
-    await exec('ls');
+    await exec('ls', [resolvedBuildDir]);
     await exec('cp', [STEAM_APPID_PATH, macOSPath]);
     await exec('mv', [libPath, macOSPath]);
     await exec('7z', ['a', resolvedBuildDir, buildDir]);
