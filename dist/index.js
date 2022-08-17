@@ -4175,8 +4175,7 @@ const STEAM_SDK_TARGET_PATH = {
 
 
 async function assembleSteamContentsFor(platform, buildDir) {
-    const projectPath = path__WEBPACK_IMPORTED_MODULE_0___default().resolve(_constants__WEBPACK_IMPORTED_MODULE_4__/* .RELATIVE_PROJECT_PATH */ .Pk);
-    const libPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(projectPath, _constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_SDK_TARGET_PATH */ .F9[platform]);
+    const libPath = _constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_SDK_TARGET_PATH */ .F9[platform];
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Assembling steam contents for ${platform}`);
     if (platform === _constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS.windows */ .ub.windows) {
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, buildDir]);

@@ -9,7 +9,6 @@ import {
   GODOT_ARCHIVE_PATH,
   GODOT_PROJECT_PATH,
   RELATIVE_EXPORT_PATH,
-  RELATIVE_PROJECT_PATH,
   STEAM_SDK_TARGET_PATH,
   USE_PRESET_EXPORT_PATH,
 } from './constants';
@@ -19,8 +18,7 @@ async function assembleSteamContentsFor(
   platform: typeof DESKTOP_PLATFORMS[keyof typeof DESKTOP_PLATFORMS],
   buildDir: string,
 ): Promise<void> {
-  const projectPath = path.resolve(RELATIVE_PROJECT_PATH);
-  const libPath = path.join(projectPath, STEAM_SDK_TARGET_PATH[platform]);
+  const libPath = STEAM_SDK_TARGET_PATH[platform];
 
   core.info(`Assembling steam contents for ${platform}`);
 
