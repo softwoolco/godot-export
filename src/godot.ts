@@ -150,7 +150,10 @@ async function getGodotVersion(): Promise<string> {
 
   await exec('godot', ['--version'], options);
   version = version.trim();
-  version = version.replace('.official', '').replace(/\.[a-z0-9]{9}$/g, '');
+  version = version
+    .replace('.official', '')
+    .replace('.custom_build', '')
+    .replace(/\.[a-z0-9]{9}$/g, '');
 
   if (!version) {
     throw new Error('Godot version could not be determined.');
