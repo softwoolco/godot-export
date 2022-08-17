@@ -21,8 +21,18 @@ async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string):
   core.info(`Assembling steam contents for ${preset.platform}`);
   core.info(`Basename: ${path.basename(preset.export_path)}`);
 
-  await exec('cp', [STEAM_APPID_PATH, buildDir]);
-  await exec('mv', [libPath, buildDir]);
+  if (preset.platform === DESKTOP_PLATFORMS.macOS) {
+    const resolvedBuildDir = buildDir.replace('.zip', '');
+    const macOSPath = path.join(resolvedBuildDir, 'Contents', 'MacOS');
+    await exec('unzip', ['-q', buildDir]);
+    await exec('rm', [buildDir]);
+    await exec('cp', [STEAM_APPID_PATH, macOSPath]);
+    await exec('mv', [libPath, macOSPath]);
+    await exec('7z', ['a', resolvedBuildDir, buildDir]);
+  } else {
+    await exec('cp', [STEAM_APPID_PATH, buildDir]);
+    await exec('mv', [libPath, buildDir]);
+  }
 }
 
 async function zipBuildResults(buildResults: BuildResult[]): Promise<void> {

@@ -4180,8 +4180,19 @@ async function assembleSteamContentsFor(preset, buildDir) {
     const libPath = _constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_SDK_TARGET_PATH */ .F9[preset.platform];
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Assembling steam contents for ${preset.platform}`);
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Basename: ${path__WEBPACK_IMPORTED_MODULE_0___default().basename(preset.export_path)}`);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('cp', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, buildDir]);
-    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, buildDir]);
+    if (preset.platform === _constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS.macOS */ .ub.macOS) {
+        const resolvedBuildDir = buildDir.replace('.zip', '');
+        const macOSPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(resolvedBuildDir, 'Contents', 'MacOS');
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('unzip', ['-q', buildDir]);
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('rm', [buildDir]);
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('cp', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, macOSPath]);
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, macOSPath]);
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('7z', ['a', resolvedBuildDir, buildDir]);
+    }
+    else {
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('cp', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, buildDir]);
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, buildDir]);
+    }
 }
 async function zipBuildResults(buildResults) {
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.startGroup('⚒️ Zipping binaries');
