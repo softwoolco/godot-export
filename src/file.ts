@@ -35,9 +35,6 @@ async function zipBuildResults(buildResults: BuildResult[]): Promise<void> {
   core.endGroup();
 }
 
-// @TODO: Implement me
-// async function _moveSteamAPPID() {}
-
 async function zipBuildResult(buildResult: BuildResult): Promise<void> {
   await io.mkdirP(GODOT_ARCHIVE_PATH);
 
@@ -50,6 +47,7 @@ async function zipBuildResult(buildResult: BuildResult): Promise<void> {
   if (isMac && !endsInDotApp) {
     const baseName = path.basename(buildResult.preset.export_path);
     const macPath = path.join(buildResult.directory, baseName);
+    await assembleSteamContentsFor(buildResult.preset, macPath);
     await io.cp(macPath, zipPath);
   } else if (!fs.existsSync(zipPath)) {
     core.info(`Zipping for ${buildResult.preset.platform}`);

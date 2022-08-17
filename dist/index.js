@@ -4192,8 +4192,6 @@ async function zipBuildResults(buildResults) {
     await Promise.all(promises);
     _actions_core__WEBPACK_IMPORTED_MODULE_5__.endGroup();
 }
-// @TODO: Implement me
-// async function _moveSteamAPPID() {}
 async function zipBuildResult(buildResult) {
     await _actions_io__WEBPACK_IMPORTED_MODULE_1__.mkdirP(_constants__WEBPACK_IMPORTED_MODULE_4__/* .GODOT_ARCHIVE_PATH */ .WW);
     const zipPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(_constants__WEBPACK_IMPORTED_MODULE_4__/* .GODOT_ARCHIVE_PATH */ .WW, `${buildResult.sanitizedName}.zip`);
@@ -4203,6 +4201,7 @@ async function zipBuildResult(buildResult) {
     if (isMac && !endsInDotApp) {
         const baseName = path__WEBPACK_IMPORTED_MODULE_0___default().basename(buildResult.preset.export_path);
         const macPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(buildResult.directory, baseName);
+        await assembleSteamContentsFor(buildResult.preset, macPath);
         await _actions_io__WEBPACK_IMPORTED_MODULE_1__.cp(macPath, zipPath);
     }
     else if (!fs__WEBPACK_IMPORTED_MODULE_3__.existsSync(zipPath)) {
