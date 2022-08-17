@@ -35,7 +35,7 @@ async function exportBuilds(): Promise<BuildResult[]> {
     return [];
   }
 
-  core.startGroup('🕹️ Download Godot');
+  core.startGroup('🕹️ Downloading Godot');
   await downloadGodot();
   core.endGroup();
 
@@ -116,7 +116,7 @@ async function prepareTemplates(): Promise<void> {
   const tmpPath = path.join(GODOT_WORKING_PATH, 'tmp');
   const godotVersion = await getGodotVersion();
 
-  await exec('unzip', ['-q', templateFile, '-d', GODOT_WORKING_PATH]);
+  await exec('unzip', ['-q', templateFile, '-d', templatesPath]);
   await exec('mv', [templatesPath, tmpPath]);
   await io.mkdirP(templatesPath);
   await exec('mv', [tmpPath, path.join(templatesPath, godotVersion)]);

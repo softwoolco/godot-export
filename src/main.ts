@@ -29,8 +29,9 @@ async function main(): Promise<number> {
   return 0;
 }
 
-// eslint-disable-next-line github/no-then
-main().catch(err => {
-  core.setFailed(err.message);
+try {
+  await main();
+} catch (err) {
+  core.setFailed((err as Error).message);
   process.exit(1);
-});
+}
