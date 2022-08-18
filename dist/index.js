@@ -4188,7 +4188,6 @@ async function assembleSteamContentsFor(preset, buildDir) {
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('rm', [buildDir]);
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('scp', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, macOSPath]);
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, macOSPath]);
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('xattr', ['-d', 'com.apple.quarantine', resolvedBuildDir]);
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('7z', ['a', buildDir, resolvedBuildDir]);
     }
     else {

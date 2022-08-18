@@ -29,7 +29,6 @@ async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string):
     await exec('rm', [buildDir]);
     await exec('scp', [STEAM_APPID_PATH, macOSPath]);
     await exec('mv', [libPath, macOSPath]);
-    await exec('xattr', ['-d', 'com.apple.quarantine', resolvedBuildDir]);
     await exec('7z', ['a', buildDir, resolvedBuildDir]);
   } else {
     await exec('cp', [STEAM_APPID_PATH, buildDir]);
