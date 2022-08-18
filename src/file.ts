@@ -24,12 +24,12 @@ async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string):
   if (preset.platform === DESKTOP_PLATFORMS.macOS) {
     const buildLocation = buildDir.replace(path.basename(preset.export_path), '');
     const resolvedBuildDir = buildDir.replace('.zip', '.app');
-    // const macOSPath = path.join(resolvedBuildDir, 'Contents', 'MacOS');
+    const macOSPath = path.join(resolvedBuildDir, 'Contents', 'MacOS');
     await exec('unzip', ['-q', buildDir, '-d', buildLocation]);
     await exec('rm', [buildDir]);
-    // await exec('ls', [resolvedBuildDir]);
-    // await exec('cp', [STEAM_APPID_PATH, macOSPath]);
-    // await exec('mv', [libPath, macOSPath]);
+    await exec('scp', [STEAM_APPID_PATH, macOSPath]);
+    await exec('mv', [libPath, macOSPath]);
+    await exec('xattr', ['-d', 'com.apple.quarantine', resolvedBuildDir]);
     await exec('7z', ['a', buildDir, resolvedBuildDir]);
   } else {
     await exec('cp', [STEAM_APPID_PATH, buildDir]);
