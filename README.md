@@ -1,6 +1,8 @@
 # Godot Export
 A workflow action to automatically export your Godot games. Supports standard and **Mono** builds!
 
+> ⚠️ It lacks instructions for integrating with Steam so far. We're working on it :)
+
 ## Contents
 - [How it works](#how-it-works)
 - [Setting Up Export Presets](#setting-up-export-presets)
