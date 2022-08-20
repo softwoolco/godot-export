@@ -121,7 +121,8 @@ async function prepareTemplates(): Promise<void> {
   await io.mkdirP(templatesPath);
   await exec('unzip', ['-q', templateFile, '-d', templatesPath]);
   await exec('mv', [templatesPath, tmpPath]);
-  await exec('mv', [tmpPath, path.join(templatesPath)]);
+  await exec('mv', [tmpPath, templatesPath]);
+  await exec('ls', [templatesPath]);
 }
 
 async function prepareTemplates4(): Promise<void> {
