@@ -1,40 +1,17 @@
-import { BuildResult, ExportPreset } from './types/GodotExport';
-import path from 'path';
-import * as io from '@actions/io';
+import * as core from '@actions/core';
 import { exec } from '@actions/exec';
+import * as io from '@actions/io';
 import * as fs from 'fs';
+import path from 'path';
 import {
   ARCHIVE_ROOT_FOLDER,
   DESKTOP_PLATFORMS,
   GODOT_ARCHIVE_PATH,
   GODOT_PROJECT_PATH,
   RELATIVE_EXPORT_PATH,
-  STEAM_APPID_PATH,
-  STEAM_SDK_TARGET_PATH,
   USE_PRESET_EXPORT_PATH,
 } from './constants';
-import * as core from '@actions/core';
-
-async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string): Promise<void> {
-  const libPath = STEAM_SDK_TARGET_PATH[preset.platform];
-
-  core.info(`Assembling steam contents for ${preset.platform}`);
-  core.info(`Basename: ${path.basename(preset.export_path)}`);
-
-  if (preset.platform === DESKTOP_PLATFORMS.macOS) {
-    const buildLocation = buildDir.replace(path.basename(preset.export_path), '');
-    const resolvedBuildDir = buildDir.replace('.zip', '.app');
-    const macOSPath = path.join(resolvedBuildDir, 'Contents', 'MacOS');
-    await exec('unzip', ['-q', buildDir, '-d', buildLocation]);
-    await exec('rm', [buildDir]);
-    await exec('scp', [STEAM_APPID_PATH, macOSPath]);
-    await exec('mv', [libPath, macOSPath]);
-    await exec('7z', ['a', buildDir, resolvedBuildDir]);
-  } else {
-    await exec('cp', [STEAM_APPID_PATH, buildDir]);
-    await exec('mv', [libPath, buildDir]);
-  }
-}
+import { BuildResult } from './types/GodotExport';
 
 async function zipBuildResults(buildResults: BuildResult[]): Promise<void> {
   core.startGroup('⚒️ Zipping binaries');

@@ -31,12 +31,6 @@ const DESKTOP_PLATFORMS = {
   macOS: 'Mac OSX',
 };
 
-const STEAM_SDK_TARGET_PATH = {
-  [DESKTOP_PLATFORMS.windows]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam', 'steam_api64.dll')),
-  [DESKTOP_PLATFORMS.macOS]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.dylib')),
-  [DESKTOP_PLATFORMS.linux]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.so')),
-} as const;
-
 export {
   ARCHIVE_OUTPUT,
   ARCHIVE_ROOT_FOLDER,
@@ -58,6 +52,5 @@ export {
   USE_GODOT_4,
   EXPORT_PACK_ONLY,
   DESKTOP_PLATFORMS,
-  STEAM_SDK_TARGET_PATH,
   STEAM_APPID_PATH,
 };
