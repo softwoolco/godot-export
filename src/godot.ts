@@ -71,8 +71,11 @@ async function downloadGodot(): Promise<void> {
   await setupWorkingPath();
   await Promise.all([downloadTemplates(), downloadExecutable()]);
   await prepareExecutable();
-  if (USE_GODOT_4) await prepareTemplates4();
-  else await prepareTemplates();
+  if (USE_GODOT_4) {
+    await prepareTemplates4();
+  } else {
+    await prepareTemplates();
+  }
 }
 
 async function setupWorkingPath(): Promise<void> {
@@ -89,16 +92,16 @@ async function downloadTemplates(): Promise<void> {
 
 async function downloadExecutable(): Promise<void> {
   core.info(`Downloading Godot executable from ${GODOT_DOWNLOAD_URL}`);
-
   const file = path.join(GODOT_WORKING_PATH, GODOT_ZIP);
+  await exec('ls', ['.']);
   await exec('wget', ['-nv', GODOT_DOWNLOAD_URL, '-O', file]);
   core.info(`Finished downloading at ${file}`);
 }
 
 async function prepareExecutable(): Promise<void> {
+  core.info(`Test from cuca`);
   const zipFile = path.join(GODOT_WORKING_PATH, GODOT_ZIP);
   const zipTo = path.join(GODOT_WORKING_PATH, GODOT_EXECUTABLE);
-  core.info(`Looking for executable at ${zipFile}`);
   await exec('7z', ['x', zipFile, `-o${zipTo}`, '-y']);
   const executablePath = findGodotExecutablePath(zipTo);
   if (!executablePath) {
@@ -243,7 +246,12 @@ function findGodotExecutablePath(basePath: string): string | undefined {
   for (const subPath of paths) {
     const fullPath = path.join(basePath, subPath);
     const stats = fs.statSync(fullPath);
-    if (stats.isFile() && (path.extname(fullPath) === '.64' || path.extname(fullPath) === '.x86_64')) {
+    if (
+      stats.isFile() &&
+      path.basename(fullPath).includes('headless') &&
+      (path.extname(fullPath) === '.64' || path.extname(fullPath) === '.x86_64')
+    ) {
+      core.info(`Found path at ', ${fullPath}`);
       return fullPath;
     } else {
       dirs.push(fullPath);

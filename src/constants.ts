@@ -25,12 +25,6 @@ const GODOT_PROJECT_FILE_PATH = path.join(GODOT_PROJECT_PATH, 'project.godot');
 
 const STEAM_APPID_PATH = path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam_appid.txt'));
 
-const DESKTOP_PLATFORMS = {
-  windows: 'Windows Desktop',
-  linux: 'Linux/X11',
-  macOS: 'Mac OSX',
-};
-
 export {
   ARCHIVE_OUTPUT,
   ARCHIVE_ROOT_FOLDER,
@@ -51,6 +45,5 @@ export {
   WINE_PATH,
   USE_GODOT_4,
   EXPORT_PACK_ONLY,
-  DESKTOP_PLATFORMS,
   STEAM_APPID_PATH,
 };

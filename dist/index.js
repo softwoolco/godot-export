@@ -4101,12 +4101,9 @@ exports.debug = debug; // for test
 /* harmony export */   "XH": () => (/* binding */ USE_PRESET_EXPORT_PATH),
 /* harmony export */   "N8": () => (/* binding */ WINE_PATH),
 /* harmony export */   "f_": () => (/* binding */ USE_GODOT_4),
-/* harmony export */   "Z3": () => (/* binding */ EXPORT_PACK_ONLY),
-/* harmony export */   "ub": () => (/* binding */ DESKTOP_PLATFORMS),
-/* harmony export */   "F9": () => (/* binding */ STEAM_SDK_TARGET_PATH),
-/* harmony export */   "xX": () => (/* binding */ STEAM_APPID_PATH)
+/* harmony export */   "Z3": () => (/* binding */ EXPORT_PACK_ONLY)
 /* harmony export */ });
-/* unused harmony export GENERATE_RELEASE_NOTES */
+/* unused harmony exports GENERATE_RELEASE_NOTES, STEAM_APPID_PATH */
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(186);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(17);
@@ -4136,16 +4133,6 @@ const GODOT_ARCHIVE_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODO
 const GODOT_PROJECT_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH));
 const GODOT_PROJECT_FILE_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_PROJECT_PATH, 'project.godot');
 const STEAM_APPID_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam_appid.txt'));
-const DESKTOP_PLATFORMS = {
-    windows: 'Windows Desktop',
-    linux: 'Linux/X11',
-    macOS: 'Mac OSX',
-};
-const STEAM_SDK_TARGET_PATH = {
-    [DESKTOP_PLATFORMS.windows]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'steam_api64.dll')),
-    [DESKTOP_PLATFORMS.macOS]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.dylib')),
-    [DESKTOP_PLATFORMS.linux]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.so')),
-};
 
 
 
@@ -4159,101 +4146,77 @@ const STEAM_SDK_TARGET_PATH = {
 /* harmony export */   "z": () => (/* binding */ zipBuildResults),
 /* harmony export */   "d": () => (/* binding */ moveBuildsToExportDirectory)
 /* harmony export */ });
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(17);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(436);
-/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(514);
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(186);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(514);
+/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(436);
+/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(147);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(42);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(186);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(17);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(42);
 
 
 
 
 
 
-async function assembleSteamContentsFor(preset, buildDir) {
-    const libPath = _constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_SDK_TARGET_PATH */ .F9[preset.platform];
-    _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Assembling steam contents for ${preset.platform}`);
-    _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Basename: ${path__WEBPACK_IMPORTED_MODULE_0___default().basename(preset.export_path)}`);
-    if (preset.platform === _constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS.macOS */ .ub.macOS) {
-        const buildLocation = buildDir.replace(path__WEBPACK_IMPORTED_MODULE_0___default().basename(preset.export_path), '');
-        const resolvedBuildDir = buildDir.replace('.zip', '.app');
-        const macOSPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(resolvedBuildDir, 'Contents', 'MacOS');
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('unzip', ['-q', buildDir, '-d', buildLocation]);
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('rm', [buildDir]);
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('scp', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, macOSPath]);
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, macOSPath]);
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('7z', ['a', buildDir, resolvedBuildDir]);
-    }
-    else {
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('cp', [_constants__WEBPACK_IMPORTED_MODULE_4__/* .STEAM_APPID_PATH */ .xX, buildDir]);
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('mv', [libPath, buildDir]);
-    }
-}
 async function zipBuildResults(buildResults) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_5__.startGroup('⚒️ Zipping binaries');
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup('⚒️ Zipping binaries');
     const promises = [];
     for (const buildResult of buildResults) {
         promises.push(zipBuildResult(buildResult));
     }
     await Promise.all(promises);
-    _actions_core__WEBPACK_IMPORTED_MODULE_5__.endGroup();
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup();
 }
 async function zipBuildResult(buildResult) {
-    await _actions_io__WEBPACK_IMPORTED_MODULE_1__.mkdirP(_constants__WEBPACK_IMPORTED_MODULE_4__/* .GODOT_ARCHIVE_PATH */ .WW);
-    const zipPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(_constants__WEBPACK_IMPORTED_MODULE_4__/* .GODOT_ARCHIVE_PATH */ .WW, `${buildResult.sanitizedName}.zip`);
+    await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(_constants__WEBPACK_IMPORTED_MODULE_5__/* .GODOT_ARCHIVE_PATH */ .WW);
+    const zipPath = path__WEBPACK_IMPORTED_MODULE_4___default().join(_constants__WEBPACK_IMPORTED_MODULE_5__/* .GODOT_ARCHIVE_PATH */ .WW, `${buildResult.sanitizedName}.zip`);
     const isMac = buildResult.preset.platform.toLowerCase() === 'mac osx';
     const endsInDotApp = !!buildResult.preset.export_path.match('.app$');
     // in case mac doesn't export a zip, move the file
     if (isMac && !endsInDotApp) {
-        const baseName = path__WEBPACK_IMPORTED_MODULE_0___default().basename(buildResult.preset.export_path);
-        const macPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(buildResult.directory, baseName);
-        await assembleSteamContentsFor(buildResult.preset, macPath);
-        await _actions_io__WEBPACK_IMPORTED_MODULE_1__.cp(macPath, zipPath);
+        const baseName = path__WEBPACK_IMPORTED_MODULE_4___default().basename(buildResult.preset.export_path);
+        const macPath = path__WEBPACK_IMPORTED_MODULE_4___default().join(buildResult.directory, baseName);
+        await _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(macPath, zipPath);
     }
     else if (!fs__WEBPACK_IMPORTED_MODULE_3__.existsSync(zipPath)) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Zipping for ${buildResult.preset.platform}`);
-        if (Object.values(_constants__WEBPACK_IMPORTED_MODULE_4__/* .DESKTOP_PLATFORMS */ .ub).includes(buildResult.preset.platform)) {
-            await assembleSteamContentsFor(buildResult.preset, buildResult.directory);
-        }
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)('7z', ['a', zipPath, `${buildResult.directory}${_constants__WEBPACK_IMPORTED_MODULE_4__/* .ARCHIVE_ROOT_FOLDER */ .UB ? '' : '/*'}`]);
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('7z', ['a', zipPath, `${buildResult.directory}${_constants__WEBPACK_IMPORTED_MODULE_5__/* .ARCHIVE_ROOT_FOLDER */ .UB ? '' : '/*'}`]);
     }
     buildResult.archivePath = zipPath;
 }
 async function moveBuildsToExportDirectory(buildResults, moveArchived) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_5__.startGroup(`➡️ Moving exports`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup(`➡️ Moving exports`);
     const promises = [];
     for (const buildResult of buildResults) {
-        const fullExportPath = path__WEBPACK_IMPORTED_MODULE_0___default().resolve(_constants__WEBPACK_IMPORTED_MODULE_4__/* .USE_PRESET_EXPORT_PATH */ .XH
-            ? path__WEBPACK_IMPORTED_MODULE_0___default().join(_constants__WEBPACK_IMPORTED_MODULE_4__/* .GODOT_PROJECT_PATH */ .MT, path__WEBPACK_IMPORTED_MODULE_0___default().dirname(buildResult.preset.export_path))
-            : _constants__WEBPACK_IMPORTED_MODULE_4__/* .RELATIVE_EXPORT_PATH */ ._7);
-        await _actions_io__WEBPACK_IMPORTED_MODULE_1__.mkdirP(fullExportPath);
+        const fullExportPath = path__WEBPACK_IMPORTED_MODULE_4___default().resolve(_constants__WEBPACK_IMPORTED_MODULE_5__/* .USE_PRESET_EXPORT_PATH */ .XH
+            ? path__WEBPACK_IMPORTED_MODULE_4___default().join(_constants__WEBPACK_IMPORTED_MODULE_5__/* .GODOT_PROJECT_PATH */ .MT, path__WEBPACK_IMPORTED_MODULE_4___default().dirname(buildResult.preset.export_path))
+            : _constants__WEBPACK_IMPORTED_MODULE_5__/* .RELATIVE_EXPORT_PATH */ ._7);
+        await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(fullExportPath);
         let promise;
         if (moveArchived) {
             if (!buildResult.archivePath) {
-                _actions_core__WEBPACK_IMPORTED_MODULE_5__.warning('Attempted to move export output that was not archived. Skipping');
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.warning('Attempted to move export output that was not archived. Skipping');
                 continue;
             }
-            const newArchivePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(fullExportPath, path__WEBPACK_IMPORTED_MODULE_0___default().basename(buildResult.archivePath));
-            _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Copying ${buildResult.archivePath} to ${newArchivePath}`);
-            promise = _actions_io__WEBPACK_IMPORTED_MODULE_1__.cp(buildResult.archivePath, newArchivePath);
+            const newArchivePath = path__WEBPACK_IMPORTED_MODULE_4___default().join(fullExportPath, path__WEBPACK_IMPORTED_MODULE_4___default().basename(buildResult.archivePath));
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Copying ${buildResult.archivePath} to ${newArchivePath}`);
+            promise = _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(buildResult.archivePath, newArchivePath);
             buildResult.archivePath = newArchivePath;
         }
         else {
-            _actions_core__WEBPACK_IMPORTED_MODULE_5__.info(`Copying ${buildResult.directory} to ${fullExportPath}`);
-            promise = _actions_io__WEBPACK_IMPORTED_MODULE_1__.cp(buildResult.directory, fullExportPath, { recursive: true });
-            buildResult.directory = path__WEBPACK_IMPORTED_MODULE_0___default().join(fullExportPath, path__WEBPACK_IMPORTED_MODULE_0___default().basename(buildResult.directory));
-            buildResult.executablePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(buildResult.directory, path__WEBPACK_IMPORTED_MODULE_0___default().basename(buildResult.executablePath));
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Copying ${buildResult.directory} to ${fullExportPath}`);
+            promise = _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(buildResult.directory, fullExportPath, { recursive: true });
+            buildResult.directory = path__WEBPACK_IMPORTED_MODULE_4___default().join(fullExportPath, path__WEBPACK_IMPORTED_MODULE_4___default().basename(buildResult.directory));
+            buildResult.executablePath = path__WEBPACK_IMPORTED_MODULE_4___default().join(buildResult.directory, path__WEBPACK_IMPORTED_MODULE_4___default().basename(buildResult.executablePath));
         }
         promises.push(promise);
     }
     await Promise.all(promises);
-    _actions_core__WEBPACK_IMPORTED_MODULE_5__.endGroup();
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup();
 }
 
 
@@ -4329,10 +4292,12 @@ async function downloadGodot() {
     await setupWorkingPath();
     await Promise.all([downloadTemplates(), downloadExecutable()]);
     await prepareExecutable();
-    if (_constants__WEBPACK_IMPORTED_MODULE_7__/* .USE_GODOT_4 */ .f_)
+    if (_constants__WEBPACK_IMPORTED_MODULE_7__/* .USE_GODOT_4 */ .f_) {
         await prepareTemplates4();
-    else
+    }
+    else {
         await prepareTemplates();
+    }
 }
 async function setupWorkingPath() {
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3);
@@ -4346,13 +4311,14 @@ async function downloadTemplates() {
 async function downloadExecutable() {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Downloading Godot executable from ${_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_DOWNLOAD_URL */ .jb}`);
     const file = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_ZIP);
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('ls', ['.']);
     await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('wget', ['-nv', _constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_DOWNLOAD_URL */ .jb, '-O', file]);
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Finished downloading at ${file}`);
 }
 async function prepareExecutable() {
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Test from cuca`);
     const zipFile = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_ZIP);
     const zipTo = path__WEBPACK_IMPORTED_MODULE_5__.join(_constants__WEBPACK_IMPORTED_MODULE_7__/* .GODOT_WORKING_PATH */ .p3, GODOT_EXECUTABLE);
-    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Looking for executable at ${zipFile}`);
     await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('7z', ['x', zipFile, `-o${zipTo}`, '-y']);
     const executablePath = findGodotExecutablePath(zipTo);
     if (!executablePath) {
@@ -4478,7 +4444,10 @@ function findGodotExecutablePath(basePath) {
     for (const subPath of paths) {
         const fullPath = path__WEBPACK_IMPORTED_MODULE_5__.join(basePath, subPath);
         const stats = fs__WEBPACK_IMPORTED_MODULE_3__.statSync(fullPath);
-        if (stats.isFile() && (path__WEBPACK_IMPORTED_MODULE_5__.extname(fullPath) === '.64' || path__WEBPACK_IMPORTED_MODULE_5__.extname(fullPath) === '.x86_64')) {
+        if (stats.isFile() &&
+            path__WEBPACK_IMPORTED_MODULE_5__.basename(fullPath).includes('headless') &&
+            (path__WEBPACK_IMPORTED_MODULE_5__.extname(fullPath) === '.64' || path__WEBPACK_IMPORTED_MODULE_5__.extname(fullPath) === '.x86_64')) {
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Found path at ', ${fullPath}`);
             return fullPath;
         }
         else {

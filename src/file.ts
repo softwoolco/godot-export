@@ -5,7 +5,6 @@ import * as fs from 'fs';
 import path from 'path';
 import {
   ARCHIVE_ROOT_FOLDER,
-  DESKTOP_PLATFORMS,
   GODOT_ARCHIVE_PATH,
   GODOT_PROJECT_PATH,
   RELATIVE_EXPORT_PATH,
@@ -35,13 +34,8 @@ async function zipBuildResult(buildResult: BuildResult): Promise<void> {
   if (isMac && !endsInDotApp) {
     const baseName = path.basename(buildResult.preset.export_path);
     const macPath = path.join(buildResult.directory, baseName);
-    await assembleSteamContentsFor(buildResult.preset, macPath);
     await io.cp(macPath, zipPath);
   } else if (!fs.existsSync(zipPath)) {
-    core.info(`Zipping for ${buildResult.preset.platform}`);
-    if (Object.values(DESKTOP_PLATFORMS).includes(buildResult.preset.platform)) {
-      await assembleSteamContentsFor(buildResult.preset, buildResult.directory);
-    }
     await exec('7z', ['a', zipPath, `${buildResult.directory}${ARCHIVE_ROOT_FOLDER ? '' : '/*'}`]);
   }
 
