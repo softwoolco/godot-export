@@ -251,7 +251,7 @@ function findGodotExecutablePath(basePath: string): string | undefined {
       path.basename(fullPath).includes('headless') &&
       (path.extname(fullPath) === '.64' || path.extname(fullPath) === '.x86_64')
     ) {
-      core.info(`Found path at ', ${fullPath}`);
+      core.info(`Found path at ${fullPath}`);
       return fullPath;
     } else {
       dirs.push(fullPath);

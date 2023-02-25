@@ -1,7 +1,7 @@
 # Godot Export
 A workflow action to automatically export your Godot games. Supports standard and **Mono** builds!
 
-> ⚠️ It lacks instructions for integrating with Steam so far. We're working on it :)
+> ⚠️ See (Setting Up Steam)[#setting-up-steam] for additional setup
 
 ## Contents
 - [How it works](#how-it-works)
@@ -19,6 +19,10 @@ A workflow action to automatically export your Godot games. Supports standard an
 ## How it Works
 
 This action automatically reads your `export_presets.cfg` file to determine which builds to make. Whenever this action runs each of your defined exports will run. The resulting executables can then be optionally attached to a release. See [the example configuration](#example-configuration).
+
+## Setting Up Steam
+- Place your `libsteam_api.so` on project's root folder
+- Ensure your `export_presets.cfg` file doesn't contain any values for `custom_template/release`
 
 ## Setting Up Export Presets
 Define at least 1 export preset by going to `Project -> Export` in the Godot editor and creating a configuration. Set the file name in the "Export Path" box. This is how the action knows how to name your binary. Notice how the below image has "win.exe" in the "Export Path" for my windows export. Your executables can be named however you like, as long as they include the appropriate extension `.exe`, `.x86_64`, etc.
