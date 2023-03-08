@@ -4101,9 +4101,11 @@ exports.debug = debug; // for test
 /* harmony export */   "XH": () => (/* binding */ USE_PRESET_EXPORT_PATH),
 /* harmony export */   "N8": () => (/* binding */ WINE_PATH),
 /* harmony export */   "f_": () => (/* binding */ USE_GODOT_4),
-/* harmony export */   "Z3": () => (/* binding */ EXPORT_PACK_ONLY)
+/* harmony export */   "Z3": () => (/* binding */ EXPORT_PACK_ONLY),
+/* harmony export */   "D0": () => (/* binding */ DESKTOP_PLATFORM),
+/* harmony export */   "m3": () => (/* binding */ STEAM_SDK_FILENAME)
 /* harmony export */ });
-/* unused harmony exports GENERATE_RELEASE_NOTES, STEAM_APPID_PATH */
+/* unused harmony export GENERATE_RELEASE_NOTES */
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(186);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(17);
@@ -4132,7 +4134,15 @@ const GODOT_BUILD_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_
 const GODOT_ARCHIVE_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_WORKING_PATH, 'archives');
 const GODOT_PROJECT_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH));
 const GODOT_PROJECT_FILE_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().join(GODOT_PROJECT_PATH, 'project.godot');
-const STEAM_APPID_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam_appid.txt'));
+const DESKTOP_PLATFORM = {
+    windows: 'windows desktop',
+    linux: 'linux/x11',
+    macOS: 'mac osx',
+};
+const STEAM_SDK_FILENAME = {
+    [DESKTOP_PLATFORM.windows]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'steam_api64.dll')),
+    [DESKTOP_PLATFORM.linux]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.so')),
+};
 
 
 
@@ -4143,8 +4153,9 @@ const STEAM_APPID_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().resolve(pat
 
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "z": () => (/* binding */ zipBuildResults),
-/* harmony export */   "d": () => (/* binding */ moveBuildsToExportDirectory)
+/* harmony export */   "z_": () => (/* binding */ zipBuildResults),
+/* harmony export */   "GU": () => (/* binding */ assembleSteamContents),
+/* harmony export */   "dV": () => (/* binding */ moveBuildsToExportDirectory)
 /* harmony export */ });
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(186);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
@@ -4163,6 +4174,23 @@ const STEAM_APPID_PATH = path__WEBPACK_IMPORTED_MODULE_1___default().resolve(pat
 
 
 
+async function assembleSteamContentsFor(preset, buildDir) {
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Assembling steam contents for ${preset.platform}`);
+    const isMac = preset.platform.toLowerCase() === _constants__WEBPACK_IMPORTED_MODULE_5__/* .DESKTOP_PLATFORM.macOS */ .D0.macOS;
+    if (!isMac) {
+        const libPath = _constants__WEBPACK_IMPORTED_MODULE_5__/* .STEAM_SDK_FILENAME */ .m3[preset.platform];
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('mv', [libPath, buildDir]);
+    }
+}
+async function assembleSteamContents(buildResults) {
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup('📁 Moving Steam SDKs to games');
+    const promises = [];
+    for (const buildResult of buildResults) {
+        promises.push(assembleSteamContentsFor(buildResult.preset, buildResult.directory));
+    }
+    await Promise.all(promises);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup();
+}
 async function zipBuildResults(buildResults) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup('⚒️ Zipping binaries');
     const promises = [];
@@ -4175,7 +4203,7 @@ async function zipBuildResults(buildResults) {
 async function zipBuildResult(buildResult) {
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(_constants__WEBPACK_IMPORTED_MODULE_5__/* .GODOT_ARCHIVE_PATH */ .WW);
     const zipPath = path__WEBPACK_IMPORTED_MODULE_4___default().join(_constants__WEBPACK_IMPORTED_MODULE_5__/* .GODOT_ARCHIVE_PATH */ .WW, `${buildResult.sanitizedName}.zip`);
-    const isMac = buildResult.preset.platform.toLowerCase() === 'mac osx';
+    const isMac = buildResult.preset.platform.toLowerCase() === _constants__WEBPACK_IMPORTED_MODULE_5__/* .DESKTOP_PLATFORM.macOS */ .D0.macOS;
     const endsInDotApp = !!buildResult.preset.export_path.match('.app$');
     // in case mac doesn't export a zip, move the file
     if (isMac && !endsInDotApp) {
@@ -4447,7 +4475,7 @@ function findGodotExecutablePath(basePath) {
         if (stats.isFile() &&
             path__WEBPACK_IMPORTED_MODULE_5__.basename(fullPath).includes('headless') &&
             (path__WEBPACK_IMPORTED_MODULE_5__.extname(fullPath) === '.64' || path__WEBPACK_IMPORTED_MODULE_5__.extname(fullPath) === '.x86_64')) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Found path at ', ${fullPath}`);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Found path at ${fullPath}`);
             return fullPath;
         }
         else {
@@ -4504,27 +4532,28 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(186);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _godot__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(379);
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(42);
-/* harmony import */ var _file__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(641);
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(42);
+/* harmony import */ var _file__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(641);
+/* harmony import */ var _godot__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(379);
 
 
 
 
 async function main() {
-    const buildResults = await (0,_godot__WEBPACK_IMPORTED_MODULE_1__/* .exportBuilds */ .b)();
+    const buildResults = await (0,_godot__WEBPACK_IMPORTED_MODULE_3__/* .exportBuilds */ .b)();
     if (!buildResults.length) {
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('No valid export presets found, exiting.');
         return 1;
     }
-    if (_constants__WEBPACK_IMPORTED_MODULE_2__/* .ARCHIVE_OUTPUT */ ._J) {
-        await (0,_file__WEBPACK_IMPORTED_MODULE_3__/* .zipBuildResults */ .z)(buildResults);
+    if (_constants__WEBPACK_IMPORTED_MODULE_1__/* .ARCHIVE_OUTPUT */ ._J) {
+        await (0,_file__WEBPACK_IMPORTED_MODULE_2__/* .assembleSteamContents */ .GU)(buildResults);
+        await (0,_file__WEBPACK_IMPORTED_MODULE_2__/* .zipBuildResults */ .z_)(buildResults);
     }
-    if (_constants__WEBPACK_IMPORTED_MODULE_2__/* .RELATIVE_EXPORT_PATH */ ._7 || _constants__WEBPACK_IMPORTED_MODULE_2__/* .USE_PRESET_EXPORT_PATH */ .XH) {
-        await (0,_file__WEBPACK_IMPORTED_MODULE_3__/* .moveBuildsToExportDirectory */ .d)(buildResults, _constants__WEBPACK_IMPORTED_MODULE_2__/* .ARCHIVE_OUTPUT */ ._J);
+    if (_constants__WEBPACK_IMPORTED_MODULE_1__/* .RELATIVE_EXPORT_PATH */ ._7 || _constants__WEBPACK_IMPORTED_MODULE_1__/* .USE_PRESET_EXPORT_PATH */ .XH) {
+        await (0,_file__WEBPACK_IMPORTED_MODULE_2__/* .moveBuildsToExportDirectory */ .dV)(buildResults, _constants__WEBPACK_IMPORTED_MODULE_1__/* .ARCHIVE_OUTPUT */ ._J);
     }
-    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('build_directory', _constants__WEBPACK_IMPORTED_MODULE_2__/* .GODOT_BUILD_PATH */ .pT);
-    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('archive_directory', _constants__WEBPACK_IMPORTED_MODULE_2__/* .GODOT_ARCHIVE_PATH */ .WW);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('build_directory', _constants__WEBPACK_IMPORTED_MODULE_1__/* .GODOT_BUILD_PATH */ .pT);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('archive_directory', _constants__WEBPACK_IMPORTED_MODULE_1__/* .GODOT_ARCHIVE_PATH */ .WW);
     return 0;
 }
 try {
