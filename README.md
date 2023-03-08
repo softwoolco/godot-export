@@ -21,7 +21,7 @@ A workflow action to automatically export your Godot games. Supports standard an
 This action automatically reads your `export_presets.cfg` file to determine which builds to make. Whenever this action runs each of your defined exports will run. The resulting executables can then be optionally attached to a release. See [the example configuration](#example-configuration).
 
 ## Setting Up Steam
-- Place your `libsteam_api.so` on project's root folder
+- Place the `libsteam_api.so` and `steam_api64.dll` files on your repository root folder
 - Ensure your `export_presets.cfg` file doesn't contain any values for `custom_template/release`
 
 ## Setting Up Export Presets

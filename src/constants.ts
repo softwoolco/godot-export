@@ -30,8 +30,8 @@ const DESKTOP_PLATFORM = {
 };
 
 const STEAM_SDK_FILENAME = {
-  [DESKTOP_PLATFORM.windows]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam', 'steam_api64.dll')),
-  [DESKTOP_PLATFORM.linux]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.so')),
+  [DESKTOP_PLATFORM.windows]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam_api64.dll')),
+  [DESKTOP_PLATFORM.linux]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'libsteam_api.so')),
 } as const;
 
 export {

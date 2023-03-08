@@ -4140,8 +4140,8 @@ const DESKTOP_PLATFORM = {
     macOS: 'mac osx',
 };
 const STEAM_SDK_FILENAME = {
-    [DESKTOP_PLATFORM.windows]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'steam_api64.dll')),
-    [DESKTOP_PLATFORM.linux]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.so')),
+    [DESKTOP_PLATFORM.windows]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'steam_api64.dll')),
+    [DESKTOP_PLATFORM.linux]: path__WEBPACK_IMPORTED_MODULE_1___default().resolve(path__WEBPACK_IMPORTED_MODULE_1___default().join(RELATIVE_PROJECT_PATH, 'libsteam_api.so')),
 };
 
 
@@ -4176,17 +4176,17 @@ const STEAM_SDK_FILENAME = {
 
 async function assembleSteamContentsFor(preset, buildDir) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Assembling steam contents for ${preset.platform}`);
-    const isMac = preset.platform.toLowerCase() === _constants__WEBPACK_IMPORTED_MODULE_5__/* .DESKTOP_PLATFORM.macOS */ .D0.macOS;
-    if (!isMac) {
-        const libPath = _constants__WEBPACK_IMPORTED_MODULE_5__/* .STEAM_SDK_FILENAME */ .m3[preset.platform];
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('mv', [libPath, buildDir]);
-    }
+    const libPath = _constants__WEBPACK_IMPORTED_MODULE_5__/* .STEAM_SDK_FILENAME */ .m3[preset.platform.toLowerCase()];
+    await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('mv', [libPath, buildDir]);
 }
 async function assembleSteamContents(buildResults) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup('📁 Moving Steam SDKs to games');
     const promises = [];
     for (const buildResult of buildResults) {
-        promises.push(assembleSteamContentsFor(buildResult.preset, buildResult.directory));
+        const isMac = buildResult.preset.platform.toLowerCase() === _constants__WEBPACK_IMPORTED_MODULE_5__/* .DESKTOP_PLATFORM.macOS */ .D0.macOS;
+        if (!isMac) {
+            promises.push(assembleSteamContentsFor(buildResult.preset, buildResult.directory));
+        }
     }
     await Promise.all(promises);
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup();
