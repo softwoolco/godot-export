@@ -16,19 +16,20 @@ import { BuildResult, ExportPreset } from './types/GodotExport';
 
 async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string): Promise<void> {
   core.info(`Assembling steam contents for ${preset.platform}`);
-  const isMac = preset.platform.toLowerCase() === DESKTOP_PLATFORM.macOS;
 
-  if (!isMac) {
-    const libPath = STEAM_SDK_FILENAME[preset.platform];
-    await exec('mv', [libPath, buildDir]);
-  }
+  const libPath = STEAM_SDK_FILENAME[preset.platform.toLowerCase()];
+  await exec('mv', [libPath, buildDir]);
 }
 
 async function assembleSteamContents(buildResults: BuildResult[]): Promise<void> {
   core.startGroup('📁 Moving Steam SDKs to games');
   const promises: Promise<void>[] = [];
   for (const buildResult of buildResults) {
-    promises.push(assembleSteamContentsFor(buildResult.preset, buildResult.directory));
+    const isMac = buildResult.preset.platform.toLowerCase() === DESKTOP_PLATFORM.macOS;
+
+    if (!isMac) {
+      promises.push(assembleSteamContentsFor(buildResult.preset, buildResult.directory));
+    }
   }
   await Promise.all(promises);
   core.endGroup();
