@@ -1,5 +1,4 @@
 import * as core from '@actions/core';
-import { exportBuilds } from './godot';
 import {
   ARCHIVE_OUTPUT,
   GODOT_ARCHIVE_PATH,
@@ -7,7 +6,8 @@ import {
   RELATIVE_EXPORT_PATH,
   USE_PRESET_EXPORT_PATH,
 } from './constants';
-import { zipBuildResults, moveBuildsToExportDirectory } from './file';
+import { assembleSteamContents, moveBuildsToExportDirectory, zipBuildResults } from './file';
+import { exportBuilds } from './godot';
 
 async function main(): Promise<number> {
   const buildResults = await exportBuilds();
@@ -17,6 +17,7 @@ async function main(): Promise<number> {
   }
 
   if (ARCHIVE_OUTPUT) {
+    await assembleSteamContents(buildResults);
     await zipBuildResults(buildResults);
   }
 

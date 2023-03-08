@@ -5,12 +5,34 @@ import * as fs from 'fs';
 import path from 'path';
 import {
   ARCHIVE_ROOT_FOLDER,
+  DESKTOP_PLATFORM,
   GODOT_ARCHIVE_PATH,
   GODOT_PROJECT_PATH,
   RELATIVE_EXPORT_PATH,
+  STEAM_SDK_FILENAME,
   USE_PRESET_EXPORT_PATH,
 } from './constants';
-import { BuildResult } from './types/GodotExport';
+import { BuildResult, ExportPreset } from './types/GodotExport';
+
+async function assembleSteamContentsFor(preset: ExportPreset, buildDir: string): Promise<void> {
+  core.info(`Assembling steam contents for ${preset.platform}`);
+  const isMac = preset.platform.toLowerCase() === DESKTOP_PLATFORM.macOS;
+
+  if (!isMac) {
+    const libPath = STEAM_SDK_FILENAME[preset.platform];
+    await exec('mv', [libPath, buildDir]);
+  }
+}
+
+async function assembleSteamContents(buildResults: BuildResult[]): Promise<void> {
+  core.startGroup('📁 Moving Steam SDKs to games');
+  const promises: Promise<void>[] = [];
+  for (const buildResult of buildResults) {
+    promises.push(assembleSteamContentsFor(buildResult.preset, buildResult.directory));
+  }
+  await Promise.all(promises);
+  core.endGroup();
+}
 
 async function zipBuildResults(buildResults: BuildResult[]): Promise<void> {
   core.startGroup('⚒️ Zipping binaries');
@@ -27,7 +49,7 @@ async function zipBuildResult(buildResult: BuildResult): Promise<void> {
 
   const zipPath = path.join(GODOT_ARCHIVE_PATH, `${buildResult.sanitizedName}.zip`);
 
-  const isMac = buildResult.preset.platform.toLowerCase() === 'mac osx';
+  const isMac = buildResult.preset.platform.toLowerCase() === DESKTOP_PLATFORM.macOS;
   const endsInDotApp = !!buildResult.preset.export_path.match('.app$');
 
   // in case mac doesn't export a zip, move the file
@@ -78,4 +100,4 @@ async function moveBuildsToExportDirectory(buildResults: BuildResult[], moveArch
   core.endGroup();
 }
 
-export { zipBuildResults, moveBuildsToExportDirectory };
+export { zipBuildResults, assembleSteamContents, moveBuildsToExportDirectory };

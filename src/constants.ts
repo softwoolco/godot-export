@@ -23,7 +23,16 @@ const GODOT_ARCHIVE_PATH = path.join(GODOT_WORKING_PATH, 'archives');
 const GODOT_PROJECT_PATH = path.resolve(path.join(RELATIVE_PROJECT_PATH));
 const GODOT_PROJECT_FILE_PATH = path.join(GODOT_PROJECT_PATH, 'project.godot');
 
-const STEAM_APPID_PATH = path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam_appid.txt'));
+const DESKTOP_PLATFORM = {
+  windows: 'windows desktop',
+  linux: 'linux/x11',
+  macOS: 'mac osx',
+};
+
+const STEAM_SDK_FILENAME = {
+  [DESKTOP_PLATFORM.windows]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam', 'steam_api64.dll')),
+  [DESKTOP_PLATFORM.linux]: path.resolve(path.join(RELATIVE_PROJECT_PATH, 'steam', 'libsteam_api.so')),
+} as const;
 
 export {
   ARCHIVE_OUTPUT,
@@ -45,5 +54,6 @@ export {
   WINE_PATH,
   USE_GODOT_4,
   EXPORT_PACK_ONLY,
-  STEAM_APPID_PATH,
+  DESKTOP_PLATFORM,
+  STEAM_SDK_FILENAME,
 };
